@@ -129,20 +129,9 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor {
 					out.write(bytesToWrite[i]);
 				}
 			}
-			
-//			// write the code
-//			for (int i = 0; i < currentCode.length(); i++) {
-//				if (currentCode.charAt(i) == '1') {
-//					out.write(ONE_BIT);
-//				} else {
-//					out.write(ZERO_BIT);
-//				}
-//			}
+
 		}
 
-		// write a terminating charcter
-		//out.write(BinaryIn.TERMINATE_CHAR);
-		
 		// close resources
 		out.flush();
 		out.close();

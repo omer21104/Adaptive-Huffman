@@ -2,6 +2,7 @@ package tree.utils;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Vector;
 
 import utilities.Symbol;
 
@@ -13,16 +14,12 @@ public class HuffmanTree {
 	private Node root, currentNYT;
 	private HashMap<Symbol, Node> leaves;
 	private Node nodes[];
-//	private Vector<PriorityQueue<Node>> blocks;
+	private Vector<Node> leadersOfBlocks;
 	
 	public HuffmanTree(int numberOfSymbols) {
 		id = 2 * numberOfSymbols - 1;
 		
-//		blocks = new Vector<>(2);
-//		blocks.add(0, new PriorityQueue<>(Collections.reverseOrder()));
-//		blocks.add(1, new PriorityQueue<>(Collections.reverseOrder()));
-		
-		
+		leadersOfBlocks = new Vector<>();
 		
 		nodes = new Node[2 * numberOfSymbols];
 		
@@ -35,11 +32,6 @@ public class HuffmanTree {
 		root = new Node(id, 0, null, null);
 		currentNYT = root;
 		
-		// add current nyt node to 0 block heap
-//		blocks.get(0).add(currentNYT);
-		
-		// decrement id here for the next node
-		nodes[id--] = root;
 	}
 	
 	/**
@@ -52,10 +44,7 @@ public class HuffmanTree {
 		// create and update new node, and NYT node
 		// and insert them to nodes array
 		Node newChild = new Node(id, 1, symbol, currentNYT);
-		
-		// add to 1 block
-//		addNodeToBlockHeap(newChild);
-		
+
 		nodes[id--] = newChild;
 		
 		Node newNYT = new Node(id, 0, null, currentNYT);
@@ -67,15 +56,10 @@ public class HuffmanTree {
 		currentNYT.setLeft(newNYT);
 		currentNYT.setRight(newChild);
 		
-//		// move old nyt up from 0 block
-//		blocks.get(0).remove(currentNYT);
-//		blocks.get(1).add(currentNYT);
-		
 		// set new nyt node
 		currentNYT = newNYT;
 		
-		// add new NYT to 0 block heap
-//		addNodeToBlockHeap(currentNYT);
+		
 
 		// update tree
 		this.updateTree(currentNYT.getParent());
@@ -100,65 +84,87 @@ public class HuffmanTree {
 		}
 		
 		if (node.equals(this.root)) {
-//			removeNodeFromBlockHeap(node);
 			
 			node.incrementWeight();
+			
+			compareNodeToLeaderOfBlock(node);
 
-//			addNodeToBlockHeap(node);
 			return;			
 		}
 		
 		// swap node with the node with highest id number in its block
 //		Node nodeWithHighestIdInBlock = this.getHighestNodeInBlockV3(node);
-		Node nodeWithHighestIdInBlock = this.getNodeWithHighestIdInBlockScanWholeTree(node);
+//		Node nodeWithHighestIdInBlock = this.getNodeWithHighestIdInBlockScanWholeTree(node);
 //		Node nodeWithHighestIdInBlock = this.getHighestIdNodeInBlock(node);
+		Node nodeWithHighestIdInBlock = this.getHighestIdNodeInBlockV4(node);
 		
-//		System.out.println("[*] High: " + nodeWithHighestIdInBlock);
-//		System.out.println("[*] This: " + node);
-		
-		if (!node.equals(nodeWithHighestIdInBlock)) {
+		if (!node.equals(nodeWithHighestIdInBlock)) 
+		{
 			 node.swapWith(nodeWithHighestIdInBlock);
 			 
 			 nodes[node.getId()] = nodeWithHighestIdInBlock;
 			 nodes[nodeWithHighestIdInBlock.getId()] = node;
-//			 System.out.println("[*] After switch nodes[node.id]: " + nodes[node.getId()]);
-//			 System.out.println("[*] After switch nodes[high.id]: " + nodes[nodeWithHighestIdInBlock.getId()]);
 		}
-		
-		// remove node from its current block and place it in the next one
-//		removeNodeFromBlockHeap(node);
-		
-		node.incrementWeight();
 
-//		addNodeToBlockHeap(node);
+		node.incrementWeight();
+		
+		compareNodeToLeaderOfBlock(node);
 		
 		// update the tree
 		this.updateTree(parentNode);
 
 	}
+
+	private Node getHighestIdNodeInBlockV4(Node node)
+	{
+		int blockIndex = node.getWeight();
+		Node leader = null;
+		
+		if (leadersOfBlocks.size() < blockIndex + 1)
+		{
+			// there is no leader for that index
+			leadersOfBlocks.add(node);
+			leader = node;
+		}
+		else
+		{
+			leader = leadersOfBlocks.get(blockIndex);
+		}
+		
+		if (leader != node.getParent())
+		{
+			if (leader.getId() > node.getId())
+			{
+				if (leader.getWeight() == node.getWeight())
+				{
+					return leader;
+				}
+			}
+		}
+		return node;
+		
+	}
 	
-//	public void createNewBlockHeap(int blockIndex) {
-//		
-//	
-//		blocks.add(blockIndex, new PriorityQueue<>(Collections.reverseOrder()));
-//		
-//	}
-	
-//	public void addNodeToBlockHeap(Node nodeToAdd) {
-//		try {
-//			blocks.get(nodeToAdd.getWeight());
-//		} catch(ArrayIndexOutOfBoundsException e) {
-//			createNewBlockHeap(nodeToAdd.getWeight());
-//		}
-//		
-//		
-//		// add the node
-//		blocks.get(nodeToAdd.getWeight()).add(nodeToAdd);
-//	}
-//	
-//	public void removeNodeFromBlockHeap(Node nodeToRemove) {
-//		blocks.get(nodeToRemove.getWeight()).remove(nodeToRemove);
-//	}
+	private void compareNodeToLeaderOfBlock(Node nodeToCompare)
+	{
+		int blockIndex = nodeToCompare.getWeight();
+		Node leaderOfBlock = null;
+		try
+		{
+			 leaderOfBlock = leadersOfBlocks.get(blockIndex);			
+		} 
+		catch (IndexOutOfBoundsException e)
+		{
+			// insert the node in blockIndex if there isnt a node there already
+			leadersOfBlocks.add(nodeToCompare);
+			leaderOfBlock = nodeToCompare;
+		}
+		
+		if (nodeToCompare.getId() > leaderOfBlock.getId())
+		{
+			leadersOfBlocks.set(blockIndex, nodeToCompare);
+		}
+	}
 	
 	/**
 	 * find and return the node with the highest id in the block of {@code node} 
@@ -249,14 +255,4 @@ public class HuffmanTree {
 		return nodeToReturn;
 	}
 	
-	// test with heaps
-//	public Node getHighestNodeInBlockV3(Node nodeToCompareTo) {
-//		int blockIndex = nodeToCompareTo.getWeight();
-//		
-//		Node nodeWithHighestIdInBlock = blocks.get(blockIndex).peek();
-//		if (nodeWithHighestIdInBlock.equals(nodeToCompareTo.getParent())) {
-//			return nodeToCompareTo;
-//		}
-//		return nodeWithHighestIdInBlock;
-//	}
 }

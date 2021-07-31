@@ -81,9 +81,6 @@ public class Node implements Comparable<Node>{
 		this.pathToThisNode = new Stack<>();
 		Node parent = this.getParent();
 		Node childNode = this;
-		if (parent == childNode) {
-			System.out.println("Problem");
-		}
 		
 		while (parent != null && childNode != null) {
 			
@@ -99,6 +96,11 @@ public class Node implements Comparable<Node>{
 			
 			if (parent != null) {
 				if (parent.equals(childNode)) {
+					break;
+				}
+				if(parent.getParent() == childNode)
+				{
+					System.out.println("SADF");
 					break;
 				}
 			}
@@ -171,23 +173,6 @@ public class Node implements Comparable<Node>{
 		weight++;
 	}
 	
-	public void setPathToNode(String path) {
-		this.pathToNode = path;
-	}
-	
-	public String getPathToNode() {
-		return this.pathToNode;
-	}
-	
-	public void updatePathToNode(boolean isLeftChild) {
-		if (isLeftChild) {
-			this.setPathToNode(this.getPathToNode() + '0');
-		}
-		else {			
-			this.setPathToNode(this.getPathToNode() + '1');
-		}
-	}
-	
 	public String toString() {
 		return String.format("{char: %s id: %d  weight: %d}" , this.val, this.id, this.weight);
 	}
@@ -208,7 +193,8 @@ public class Node implements Comparable<Node>{
 	public boolean equals(Node otherNode) {
 		return this.id == otherNode.id && 
 			   this.weight == otherNode.weight &&
-			   this.parent == otherNode.parent;
+			   this.parent == otherNode.parent &&
+			   this.val == otherNode.val;
 	}
 	
 }
