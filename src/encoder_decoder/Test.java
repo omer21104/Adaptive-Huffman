@@ -10,8 +10,8 @@ public class Test {
 
 	public static void main(String[] args) {
 
-		ProgramHandler handler = new ProgramHandler();
-		handler.initGui();
+//		ProgramHandler handler = new ProgramHandler();
+//		handler.initGui();
 	
 		
 //		System.out.println(Converter.stringToInt("0001"));
@@ -21,13 +21,13 @@ public class Test {
 //		
 //		System.out.println(n1.equals(n2));
 		
-//		String[] input_name = {"OnTheOrigin.txt"};
-//		String[] inputDe_name = {"outTest"};
-//		String[] out_name = {"testing.txt"};
-//		
-//		AdaptiveHuffmanEncoderDecoder ende = new AdaptiveHuffmanEncoderDecoder(2);
-//		ende.Compress(input_name, inputDe_name);
-//		ende.Decompress(inputDe_name, out_name);
+		String[] input_name = {"OnTheOrigin.txt"};
+		String[] inputDe_name = {"outTest"};
+		String[] out_name = {"testing.txt"};
+		
+		AdaptiveHuffmanEncoderDecoder ende = new AdaptiveHuffmanEncoderDecoder(1);
+		ende.Compress(input_name, inputDe_name);
+		ende.Decompress(inputDe_name, out_name);
 	}
 	
 

@@ -14,12 +14,12 @@ public class HuffmanTree {
 	private Node root, currentNYT;
 	private HashMap<Symbol, Node> leaves;
 	private Node nodes[];
-	private Vector<Node> leadersOfBlocks;
+	private HashMap<Integer, Node> leadersOfBlocks;
 	
 	public HuffmanTree(int numberOfSymbols) {
 		id = 2 * numberOfSymbols - 1;
 		
-		leadersOfBlocks = new Vector<>();
+		leadersOfBlocks = new HashMap<Integer, Node>();
 		
 		nodes = new Node[2 * numberOfSymbols];
 		
@@ -59,7 +59,7 @@ public class HuffmanTree {
 		// set new nyt node
 		currentNYT = newNYT;
 		
-		
+		compareNodeToLeaderOfBlock(newChild);
 
 		// update tree
 		this.updateTree(currentNYT.getParent());
@@ -86,8 +86,8 @@ public class HuffmanTree {
 		if (node.equals(this.root)) {
 			
 			node.incrementWeight();
-			
 			compareNodeToLeaderOfBlock(node);
+			
 
 			return;			
 		}
@@ -107,8 +107,8 @@ public class HuffmanTree {
 		}
 
 		node.incrementWeight();
-		
 		compareNodeToLeaderOfBlock(node);
+		
 		
 		// update the tree
 		this.updateTree(parentNode);
@@ -118,52 +118,50 @@ public class HuffmanTree {
 	private Node getHighestIdNodeInBlockV4(Node node)
 	{
 		int blockIndex = node.getWeight();
-		Node leader = null;
+		Node leaderOfBlock = leadersOfBlocks.get(blockIndex);
+		Node nodeToReturn = null;
 		
-		if (leadersOfBlocks.size() < blockIndex + 1)
+		if (leaderOfBlock != null)
 		{
-			// there is no leader for that index
-			leadersOfBlocks.add(node);
-			leader = node;
+			if (leaderOfBlock != node.getParent())
+			{
+				nodeToReturn = leaderOfBlock;
+			}
+			else
+			{
+				nodeToReturn = node;
+			}
 		}
 		else
 		{
-			leader = leadersOfBlocks.get(blockIndex);
+			leadersOfBlocks.put(blockIndex, node);
+			nodeToReturn = node;
 		}
 		
-		if (leader != node.getParent())
-		{
-			if (leader.getId() > node.getId())
-			{
-				if (leader.getWeight() == node.getWeight())
-				{
-					return leader;
-				}
-			}
-		}
-		return node;
+		return nodeToReturn;
 		
 	}
 	
 	private void compareNodeToLeaderOfBlock(Node nodeToCompare)
 	{
 		int blockIndex = nodeToCompare.getWeight();
-		Node leaderOfBlock = null;
-		try
-		{
-			 leaderOfBlock = leadersOfBlocks.get(blockIndex);			
-		} 
-		catch (IndexOutOfBoundsException e)
-		{
-			// insert the node in blockIndex if there isnt a node there already
-			leadersOfBlocks.add(nodeToCompare);
-			leaderOfBlock = nodeToCompare;
-		}
+		Node leaderOfBlock = leadersOfBlocks.get(blockIndex);
 		
-		if (nodeToCompare.getId() > leaderOfBlock.getId())
+		if (leaderOfBlock != null)
 		{
-			leadersOfBlocks.set(blockIndex, nodeToCompare);
+			// compare node to leader
+			if (nodeToCompare.getWeight() == leaderOfBlock.getWeight())
+			{
+				if (nodeToCompare.getId() > leaderOfBlock.getId())
+				{
+					leadersOfBlocks.put(blockIndex, nodeToCompare);
+				}
+			}
 		}
+		else
+		{
+			leadersOfBlocks.put(blockIndex, nodeToCompare);
+		}	
 	}
 	
 	/**
