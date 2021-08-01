@@ -9,7 +9,7 @@ public class Node implements Comparable<Node>{
 	public final static boolean LEFT_CHILD = false, RIGHT_CHILD = true; // false for 0 true for 1 bit
 	
 	private int id, weight;
-	private Symbol val;
+	private Symbol symbol;
 	private Node left, right, parent;
 	private String pathToNode;
 	private Stack<Boolean> pathToThisNode;
@@ -30,7 +30,7 @@ public class Node implements Comparable<Node>{
 		this.parent = parent;
 		this.id = id;
 		this.weight = weight;
-		this.val = val;
+		this.symbol = val;
 		this.left = this.right = null;
 		this.pathToNode = "";
 		this.pathToThisNode = null;
@@ -135,12 +135,12 @@ public class Node implements Comparable<Node>{
 		this.weight = weight;
 	}
 
-	public Symbol getVal() {
-		return val;
+	public Symbol getSymbol() {
+		return symbol;
 	}
 
-	public void setVal(Symbol val) {
-		this.val = val;
+	public void setSymbol(Symbol symbol) {
+		this.symbol = symbol;
 	}
 
 	public Node getLeft() {
@@ -189,7 +189,7 @@ public class Node implements Comparable<Node>{
 	}
 	
 	public String toString() {
-		return String.format("{char: %s id: %d  weight: %d}" , this.val, this.id, this.weight);
+		return String.format("{char: %s id: %d  weight: %d}" , this.symbol, this.id, this.weight);
 	}
 
 	@Override

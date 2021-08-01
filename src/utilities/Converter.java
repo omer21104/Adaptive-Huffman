@@ -11,16 +11,20 @@ import java.util.Iterator;
 
 public interface Converter {
 
-	public static int stringToInt(String s)
+	/**
+	 * convert integer value of a binary number represented as a string
+	 * @param binaryStr the string to convert
+	 * @return int value of the binary string
+	 */
+	public static int stringToInt(String binaryStr)
 	{
 		int result = 0;
 		int exponent = 0;
-		for (int i = s.length() - 1; i >= 0; i--) 
+		for (int i = binaryStr.length() - 1; i >= 0; i--, exponent++) 
 		{
-			if (s.charAt(i) == '1')
+			if (binaryStr.charAt(i) == '1')
 			{
 				result += Math.pow(2, exponent);
-				exponent++;
 			}
 		}
 		
