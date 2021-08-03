@@ -222,6 +222,10 @@ public class ProgramGui extends javax.swing.JFrame {
 
         decompOutputFilePathLabel.setText("Output file path");
 
+        decompInputFileTextArea.setFocusable(false);
+        
+        decompOutputFolderPathTextArea.setFocusable(false);
+        
         decompOutputFileNameTextArea.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 decompOutputFileNameTextAreaActionPerformed(evt);
@@ -395,8 +399,8 @@ public class ProgramGui extends javax.swing.JFrame {
 
     private void selectDecompInputFileBtnActionPerformed(java.awt.event.ActionEvent evt) 
 {                                                         
+    	fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         int returnVal = fileChooser.showOpenDialog(this);
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
 

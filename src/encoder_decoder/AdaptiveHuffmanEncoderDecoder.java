@@ -146,15 +146,14 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 			///////
 			// test writing a control bit
 			// 0 means not last
-			if (reachedEOF)
+			if (!reachedEOF && !in.isEmpty())
 			{				
-				out.write(ONE_BIT);
-			}
-			else
-			{
 				out.write(ZERO_BIT);
 			}
 		}
+		
+		// write finishing 1 bit
+		out.write(ONE_BIT);
 
 		// close resources
 		out.flush();
@@ -251,8 +250,6 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 						catch(NoSuchElementException e) 
 						{
 							// eof
-							// handle last symbol here
-							////////////////////////////
 							byte tmpByteArr[] = Arrays.copyOf(currentBytes, i + 1);
 							currentBytes = tmpByteArr;
 							
@@ -260,6 +257,8 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 							break;
 						}
 					}
+					
+					// create a symbol with read bytes
 					currentSymbol = new Symbol(currentBytes);
 					
 					// save binary representation of the symbol
@@ -323,7 +322,8 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 			}
 
 			// traverse the tree
-			try {
+			try 
+			{
 				currentBit = in.readBoolean();
 
 				if (currentBit == ONE_BIT) 
