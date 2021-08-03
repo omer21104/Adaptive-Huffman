@@ -14,7 +14,7 @@ public class Test {
 	public static void main(String[] args) {
 
 		ProgramHandler handler = new ProgramHandler();
-		handler.initGui();
+		handler.initAndShowGui();
 		
 		
 		

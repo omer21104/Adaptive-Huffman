@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package gui;
 
 import java.io.File;
@@ -14,10 +8,10 @@ import encoder_decoder.AdaptiveHuffmanEnDeTask;
 import main.ProgramHandler;
 
 /**
- *
- * @author ASUS
+ * This class handles the gui for the compression program 
  */
-public class ProgramGui extends javax.swing.JFrame {
+public class ProgramGui extends javax.swing.JFrame 
+{
     private static final boolean VISIBLE = true;
     private static final boolean ENABLED = true;
     private ProgramHandler handler;
@@ -30,8 +24,7 @@ public class ProgramGui extends javax.swing.JFrame {
         initLookAndFeel();
         
         this.handler = handler; 
-        handler.setGuiRef(this);
-        
+        handler.setGuiRef(this);     
     }
 
     /** This method is called from within the constructor to

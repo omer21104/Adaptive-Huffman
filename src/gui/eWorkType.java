@@ -1,6 +1,7 @@
 package gui;
 
-public enum eWorkType {
+public enum eWorkType 
+{
 	compress,
 	decompress
 }

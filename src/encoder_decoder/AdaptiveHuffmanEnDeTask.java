@@ -1,24 +1,27 @@
 package encoder_decoder;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 import gui.eWorkType;
 import main.ProgramHandler;
 
-public class AdaptiveHuffmanEnDeTask extends SwingWorker<Object, Object> {
-
+/**
+ * This class is a Task to be executed on a separate thread
+ */
+public class AdaptiveHuffmanEnDeTask extends SwingWorker<Object, Object> 
+{
 	private eWorkType workType;
 	private ProgramHandler handler;
 	
-	public AdaptiveHuffmanEnDeTask(eWorkType workType, ProgramHandler handler) {
+	public AdaptiveHuffmanEnDeTask(eWorkType workType, ProgramHandler handler) 
+	{
 		this.workType = workType;
 		this.handler = handler;
 	}
 	
-	
 	@Override
-	protected Object doInBackground() throws Exception {
+	protected Object doInBackground() throws Exception 
+	{
 		
 		if (workType == eWorkType.compress)
 		{
@@ -43,7 +46,4 @@ public class AdaptiveHuffmanEnDeTask extends SwingWorker<Object, Object> {
             e.printStackTrace();
         }
     }
-
-	
-
 }

@@ -17,6 +17,10 @@ import tree.utils.*;
 import utilities.Converter;
 import utilities.Symbol;
 
+/**
+ * This class implements the Adaptive Huffman algorithm for compression / decompression. <br>
+ * Vitter algorithm for handling tree updation is used.
+ */
 public class AdaptiveHuffmanEncoderDecoder implements Compressor 
 {
 	private static final boolean ONE_BIT = true;
@@ -87,9 +91,7 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 				} 
 				catch(NoSuchElementException e) 
 				{
-					// eof
-					// handle last symbol here
-					////////////////////////////
+					// EOF - handle case where the last bytes left are smaller than the symbol size
 					byte tmpByteArr[] = Arrays.copyOf(currentBytes, i + 1);
 					currentBytes = tmpByteArr;
 					
@@ -143,9 +145,7 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 				}
 			}
 			
-			///////
-			// test writing a control bit
-			// 0 means not last
+			// write a '0' control bit after each code for a symbol
 			if (!reachedEOF && !in.isEmpty())
 			{				
 				out.write(ZERO_BIT);
@@ -178,13 +178,11 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 		}
 		
 		System.out.println("[*] Finished compressing");
-
 	}
 
 	@Override
 	public void Decompress(String[] input_names, String[] output_names) 
 	{
-
 		// init input and output streams and objects
 		BinaryIn in = null;
 		BinaryOut out = null;
@@ -223,8 +221,6 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 		boolean currentBit;
 		boolean reachedEOF = false;
 		boolean controlBit = false;
-		int reachedEOFIndex = 0;
-		
 		
 		while (!in.isEmpty()) 
 		{
@@ -249,11 +245,10 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 						} 
 						catch(NoSuchElementException e) 
 						{
-							// eof
+							// EOF - handle case where the last bytes left are smaller than the symbol size
 							byte tmpByteArr[] = Arrays.copyOf(currentBytes, i + 1);
 							currentBytes = tmpByteArr;
-							
-//							reachedEOF = true;
+
 							break;
 						}
 					}
@@ -276,22 +271,22 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 					// update tree
 					huffmanTree.updateTree(traverseNode);	
 					
-					currentCode = Converter.bytesToString(currentSymbol.getBytes());
-					
-					
+					currentCode = Converter.bytesToString(currentSymbol.getBytes());	
 				}
 				
 				// write the code
 				for (int i = 0; i < currentCode.length(); i++) 
 				{
-					if (currentCode.charAt(i) == '1') {
+					if (currentCode.charAt(i) == '1') 
+					{
 						out.write(ONE_BIT);
-					} else {
+					} 
+					else 
+					{
 						out.write(ZERO_BIT);
 					}
 				}
 				
-				////////////////////
 				// read one more control bit
 				try 
 				{
@@ -299,14 +294,12 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 				}
 				catch(NoSuchElementException e)
 				{
-					System.out.println("control");
+					
 				}
 				
 				if (controlBit == ONE_BIT)
 				{
-					System.out.println("hit");
 					reachedEOF = true;
-//					break;
 				}
 				
 				// reset traverseNode
@@ -335,9 +328,10 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 					traverseNode = traverseNode.getLeft();
 				}
 
-			} catch (NoSuchElementException ex) {
+			} 
+			catch (NoSuchElementException ex) 
+			{
 				// EOF
-				// ex.printStackTrace();
 			}
 		}
 
@@ -378,20 +372,24 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 		return null;
 	}
 	
-	private void setSymbolSize(int size) {
-		if (size < 1) {
+	private void setSymbolSize(int size) 
+	{
+		if (size < 1) 
+		{
 			size = 1;
 		}
+		
 		this.symbolSize = size;
 	}
 	
+	/**
+	 * write out 4 bit header for symbol size
+	 * @param out BinaryOut object for writing
+	 */
 	private void writeSymbolSizeHeader(BinaryOut out)
 	{
 		String symbolSizeBits = Converter.getNBitsString(numOfBitsForSymbolSize, symbolSize);
-		
-		//////////////******************
-		System.out.println("[*] writing symbol size header: " + symbolSizeBits);
-		
+	
 		for (int i = 0; i < numOfBitsForSymbolSize; i++) 
 		{
 			if (symbolSizeBits.charAt(i) == '1')
@@ -405,6 +403,12 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 		}
 	}
 	
+	/**
+	 * read in 4 bit header to determine symbol size. <br>
+	 * @see #writeSymbolSizeHeader
+	 * @param in BinaryIn object to read from file
+	 * @return int representation of the symbol size
+	 */
 	private int readSymbolSizeFromHeader(BinaryIn in) 
 	{
 		String first4bits = "";
@@ -421,10 +425,7 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 			}
 		}
 		
-		System.out.println(first4bits);
 		int result = Converter.stringToInt(first4bits);
-		System.out.println(result);
 		return result;
 	}
-
 }
