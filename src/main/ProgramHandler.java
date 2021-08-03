@@ -5,22 +5,27 @@ import gui.ProgramGui;
 
 /**
  * this class manages all events triggered by the gui and fires them in the encoder decoder
- * @author ASUS
- *
  */
-public class ProgramHandler {
+public class ProgramHandler 
+{
 	private AdaptiveHuffmanEncoderDecoder encoderDecoder;
 	private ProgramGui gui;
 	
-	public ProgramHandler() {
+	public ProgramHandler() 
+	{
 		
 	}
 	
-	public ProgramHandler(ProgramGui gui) {
+	public ProgramHandler(ProgramGui gui) 
+	{
 		this.gui = gui;	
 	}
 
-	public void startCompression() {
+	/**
+	 * initialize compression from button click in the gui
+	 */
+	public void startCompression() 
+	{
 		int symbolSize = gui.getSymbolSize();
 		String[] inputFilePath = gui.getCompInputFilePath();
 		String[] outputFileFolderPath = gui.getCompOutputFolderPath();
@@ -32,9 +37,6 @@ public class ProgramHandler {
 		// create encoderDecoder object
 		encoderDecoder = new AdaptiveHuffmanEncoderDecoder(symbolSize);
 		
-		System.out.println(inputFilePath[0]);
-		System.out.println(fullOutputPath[0]);
-		
 		// compress
 		encoderDecoder.Compress(inputFilePath, fullOutputPath);
 		
@@ -42,7 +44,11 @@ public class ProgramHandler {
 		gui.finalizeCompression();
 	}
 	
-	public void startDecompression() {
+	/**
+	 * initialize decompression from button click in the gui
+	 */
+	public void startDecompression() 
+	{
 		String[] inputFilePath = gui.getDecompInputFilePath();
 		String[] outputFolderPath = gui.getDecompOutputFolderPath();
 		String[] outputFileName = gui.getDecompOutputFileName();
@@ -52,7 +58,6 @@ public class ProgramHandler {
 		
 		// create encoderDecoder object
 		encoderDecoder = new AdaptiveHuffmanEncoderDecoder();
-				
 		
 		encoderDecoder.Decompress(inputFilePath, fullOutputPath);
 		
@@ -60,12 +65,14 @@ public class ProgramHandler {
 		gui.finalizeDecompression();
 	}
 	
-	public void initGui() {
+	public void initAndShowGui() 
+	{
 		gui = new ProgramGui(this);
 		gui.showGui(this);
 	}
 	
-	public void setGuiRef(ProgramGui gui) {
+	public void setGuiRef(ProgramGui gui) 
+	{
 		this.gui = gui;
 	}
 	

@@ -4,17 +4,21 @@ import java.util.Stack;
 
 import utilities.Symbol;
 
-public class Node implements Comparable<Node>{
-	
+/**
+ * This class represents a node in Huffman Tree structure
+ */
+public class Node implements Comparable<Node>
+{
 	public final static boolean LEFT_CHILD = false, RIGHT_CHILD = true; // false for 0 true for 1 bit
 	
 	private int id, weight;
-	private Symbol val;
+	private Symbol symbol;
 	private Node left, right, parent;
-	private String pathToNode;
+//	private String pathToNode;
 	private Stack<Boolean> pathToThisNode;
 
-	public Node() {
+	public Node() 
+	{
 		
 	}
 	
@@ -26,23 +30,25 @@ public class Node implements Comparable<Node>{
 	 * @param parent parent node
 	 * @param nyt boolean flag to indicate if the node is NYT
 	 */
-	public Node(int id, int weight, Symbol val, Node parent) {
+	public Node(int id, int weight, Symbol val, Node parent) 
+	{
 		this.parent = parent;
 		this.id = id;
 		this.weight = weight;
-		this.val = val;
+		this.symbol = val;
 		this.left = this.right = null;
-		this.pathToNode = "";
+//		this.pathToNode = "";
 		this.pathToThisNode = null;
-		
 	}
 	
 	/**
 	 * Swap two nodes with each other.
 	 * @param otherNode node to be swapped with this node
 	 */
-	public void swapWith(Node otherNode) {
-		if (otherNode.getParent() == null || this.getParent() == null) {
+	public void swapWith(Node otherNode) 
+	{
+		if (otherNode.getParent() == null || this.getParent() == null) 
+		{
 			return;
 		}
 			
@@ -50,17 +56,21 @@ public class Node implements Comparable<Node>{
 		boolean isThisNodeLeftChild = this.getParent().getLeft().equals(this);
 		
 		Node tmpNode = this;
-		if (isThisNodeLeftChild) {
+		if (isThisNodeLeftChild) 
+		{
 			this.getParent().setLeft(otherNode);
 		}
-		else {
+		else 
+		{
 			this.getParent().setRight(otherNode);
 		}
 		
-		if (isOtherNodeLeftChild) {
+		if (isOtherNodeLeftChild) 
+		{
 			otherNode.getParent().setLeft(tmpNode);
 		}
-		else {
+		else 
+		{
 			otherNode.getParent().setRight(tmpNode);
 		}
 		
@@ -70,35 +80,38 @@ public class Node implements Comparable<Node>{
 		otherNode.setId(thisNodeId);
 		
 		// swap parents if needed
-		if (!this.getParent().equals(otherNode.getParent())) {
+		if (!this.getParent().equals(otherNode.getParent())) 
+		{
 			Node tmpParent = this.getParent();
 			this.setParent(otherNode.getParent());
 			otherNode.setParent(tmpParent);
 		}
 	}
 	
-	public Stack<Boolean> getPathToThisNode() {
+	public Stack<Boolean> getPathToThisNode() 
+	{
 		this.pathToThisNode = new Stack<>();
 		Node parent = this.getParent();
 		Node childNode = this;
-		if (parent == childNode) {
-			System.out.println("Problem");
-		}
 		
-		while (parent != null && childNode != null) {
-			
-			if (parent.getLeft().equals(childNode)) {
+		while (parent != null && childNode != null) 
+		{		
+			if (parent.getLeft().equals(childNode)) 
+			{
 				this.pathToThisNode.push(LEFT_CHILD);
 			}
-			else {
+			else 
+			{
 				this.pathToThisNode.push(RIGHT_CHILD);
 			}
 			
 			childNode = parent;
 			parent = parent.getParent();
 			
-			if (parent != null) {
-				if (parent.equals(childNode)) {
+			if (parent != null) 
+			{
+				if (parent.equals(childNode)) 
+				{
 					break;
 				}
 			}
@@ -111,104 +124,124 @@ public class Node implements Comparable<Node>{
 	 * check if this node is NYT
 	 * @return True if and only if this node is NYT - weight == 0, false otherwise.
 	 */
-	public boolean isNYT() {
+	public boolean isNYT() 
+	{
 		return this.getWeight() == 0;
 	}
 	
-	public boolean isLeaf() {
+	public boolean isLeaf() 
+	{
 		return this.left == null && this.right == null;
 	}
 
-	public int getId() {
+	public int getId() 
+	{
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(int id) 
+	{
 		this.id = id;
 	}
 
-	public int getWeight() {
+	public int getWeight() 
+	{
 		return weight;
 	}
 
-	public void setWeight(int weight) {
+	public void setWeight(int weight)
+	{
 		this.weight = weight;
 	}
 
-	public Symbol getVal() {
-		return val;
+	public Symbol getSymbol() 
+	{
+		return symbol;
 	}
 
-	public void setVal(Symbol val) {
-		this.val = val;
+	public void setSymbol(Symbol symbol) 
+	{
+		this.symbol = symbol;
 	}
 
-	public Node getLeft() {
+	public Node getLeft() 
+	{
 		return left;
 	}
 
-	public void setLeft(Node left) {
+	public void setLeft(Node left) 
+	{
 		this.left = left;
 	}
 
-	public Node getRight() {
+	public Node getRight() 
+	{
 		return right;
 	}
 
-	public void setRight(Node right) {
+	public void setRight(Node right) 
+	{
 		this.right = right;
 	}
 
-	public Node getParent() {
+	public Node getParent() 
+	{
 		return parent;
 	}
 
-	public void setParent(Node parent) {
+	public void setParent(Node parent) 
+	{
 		this.parent = parent;
 	}
 	
-	public void incrementWeight() {
+	public void incrementWeight() 
+	{
 		weight++;
 	}
 	
-	public void setPathToNode(String path) {
-		this.pathToNode = path;
-	}
+//	public void setPathToNode(String path) {
+//		this.pathToNode = path;
+//	}
+//	
+//	public String getPathToNode() {
+//		return this.pathToNode;
+//	}
 	
-	public String getPathToNode() {
-		return this.pathToNode;
-	}
+//	public void updatePathToNode(boolean isLeftChild) {
+//		if (isLeftChild) {
+//			this.setPathToNode(this.getPathToNode() + '0');
+//		}
+//		else {			
+//			this.setPathToNode(this.getPathToNode() + '1');
+//		}
+//	}
 	
-	public void updatePathToNode(boolean isLeftChild) {
-		if (isLeftChild) {
-			this.setPathToNode(this.getPathToNode() + '0');
-		}
-		else {			
-			this.setPathToNode(this.getPathToNode() + '1');
-		}
-	}
-	
-	public String toString() {
-		return String.format("{char: %s id: %d  weight: %d}" , this.val, this.id, this.weight);
+	public String toString() 
+	{
+		return String.format("{char: %s id: %d  weight: %d}" , this.symbol, this.id, this.weight);
 	}
 
 	@Override
-	public int compareTo(Node otherNode) {
-		if (this.getId() > otherNode.getId()) {
+	public int compareTo(Node otherNode) 
+	{
+		if (this.getId() > otherNode.getId()) 
+		{
 			return 1;
 		}
-		else if (this.getId() == otherNode.getId()) {
+		else if (this.getId() == otherNode.getId()) 
+		{
 			return 0;
 		}
-		else {
+		else
+		{
 			return -1;
 		}
 	}
 	
-	public boolean equals(Node otherNode) {
+	public boolean equals(Node otherNode) 
+	{
 		return this.id == otherNode.id && 
 			   this.weight == otherNode.weight &&
 			   this.parent == otherNode.parent;
 	}
-	
 }
