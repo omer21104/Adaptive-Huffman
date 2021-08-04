@@ -5,15 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Stack;
 
 import BinaryIO.BinaryIn;
 import BinaryIO.BinaryOut;
 import base.Compressor;
-import tree.utils.*;
+import tree_utils.*;
 import utilities.Converter;
 import utilities.Symbol;
 
@@ -71,7 +69,6 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 
 		Symbol currentSymbol = null;
 		Node currentNode = null;
-		String currentCode = null;
 		boolean reachedEOF = false;
 		Stack<Boolean> currentPathToNode = null;
 
@@ -80,7 +77,6 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 		
 		while (!in.isEmpty()) 
 		{
-			currentCode = "";
 			// read bytes according to symbol length
 			byte currentBytes[] = new byte[symbolSize];
 			for (int i = 0; i < currentBytes.length; i++) 
