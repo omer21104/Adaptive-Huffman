@@ -128,6 +128,12 @@ public interface Converter
 		}
 	}
 	
+	/**
+	 * convert an integer value to a binary string in specified length
+	 * @param numOfBits length of result string
+	 * @param val the value to be converted
+	 * @return a binary {@code String} representation of {@code val} value 
+	 */
 	public static String getNBitsString(int numOfBits, int val) 
 	{
 		StringBuilder sb = new StringBuilder();
