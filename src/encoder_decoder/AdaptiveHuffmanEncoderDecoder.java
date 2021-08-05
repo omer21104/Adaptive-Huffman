@@ -43,27 +43,9 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 	public void Compress(String[] input_names, String[] output_names) 
 	{
 		// init output and input streams
-		BinaryIn in = null;
-		BinaryOut out = null;
-		FileInputStream inStream = null;
-		FileOutputStream outStream = null;
+		BinaryIn in = initBinaryIn(input_names);
+		BinaryOut out = initBinaryOut(output_names);
 
-		try 
-		{
-			inStream = new FileInputStream(input_names[0]);
-			outStream = new FileOutputStream(output_names[0]);
-		} 
-		catch (FileNotFoundException e) 
-		{
-			System.err.println("File not found. Terminating");
-			e.printStackTrace();
-			System.exit(1);
-		}
-
-		in = new BinaryIn(inStream);
-		out = new BinaryOut(outStream);
-
-		// init huffman tree
 		HuffmanTree huffmanTree = new HuffmanTree(this.numberOfSymbols);
 
 		Symbol currentSymbol = null;
@@ -147,28 +129,15 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 		// write finishing 1 bit
 		out.write(ONE_BIT);
 
-		// close resources
-		out.flush();
-		out.close();
-
 		try 
 		{
-			inStream.close();
-		} 
-		catch (IOException e1) 
-		{
-			e1.printStackTrace();
-		}
-		
-		try 
-		{
-			outStream.close();
+			closeResources(in, out);
 		} 
 		catch (IOException e) 
 		{
 			e.printStackTrace();
 		}
-		
+
 		System.out.println("[*] Finished compressing");
 	}
 
@@ -176,26 +145,9 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 	public void Decompress(String[] input_names, String[] output_names) 
 	{
 		// init input and output streams and objects
-		BinaryIn in = null;
-		BinaryOut out = null;
-		FileInputStream inStream = null;
-		FileOutputStream outStream = null;
-
-		try 
-		{
-			inStream = new FileInputStream(input_names[0]);
-			outStream = new FileOutputStream(output_names[0]);
-		} 
-		catch (FileNotFoundException e) 
-		{
-			System.err.println("File not found. Terminating");
-			e.printStackTrace();
-			System.exit(1);
-		}
-
-		in = new BinaryIn(inStream);
-		out = new BinaryOut(outStream);
-
+		BinaryIn in = initBinaryIn(input_names);
+		BinaryOut out = initBinaryOut(output_names);
+	
 		// read first 4 bits to get symbol size
 		symbolSize = readSymbolSizeFromHeader(in);
 
@@ -318,25 +270,13 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 		}
 
 		// close resources
-		out.flush();
-		out.close();
-
 		try 
 		{
-			inStream.close();
+			closeResources(in, out);
 		} 
-		catch (IOException e1) 
+		catch (IOException e) 
 		{
-			e1.printStackTrace();
-		}
-		
-		try 
-		{
-			outStream.close();
-		} 
-		catch (IOException ex) 
-		{
-			ex.printStackTrace();
+			e.printStackTrace();
 		}
 		
 		System.out.println("[*] Finished decompressing");
@@ -410,4 +350,44 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 		int result = Converter.stringToInt(first4bits);
 		return result;
 	}
+	
+	private BinaryIn initBinaryIn(String[] input_names) {
+		FileInputStream inStream = null;
+		try 
+		{
+			inStream = new FileInputStream(input_names[0]);
+		} 
+		catch (FileNotFoundException e) 
+		{
+			System.err.println("File not found. Terminating");
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+		return new BinaryIn(inStream);
+	}
+	
+	private BinaryOut initBinaryOut(String[] output_names) 
+	{
+		FileOutputStream outStream = null;
+		try 
+		{
+			outStream = new FileOutputStream(output_names[0]);
+		} 
+		catch (FileNotFoundException e) 
+		{
+			System.err.println("File not found. Terminating");
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+		return new BinaryOut(outStream);
+	}
+
+	private void closeResources(BinaryIn in, BinaryOut out) throws IOException 
+	{
+		in.close();
+		out.close();
+	}
+
 }
