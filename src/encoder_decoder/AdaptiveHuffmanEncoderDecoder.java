@@ -68,7 +68,7 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 				catch(NoSuchElementException e) 
 				{
 					// EOF - handle case where the last bytes left are smaller than the symbol size
-					byte tmpByteArr[] = Arrays.copyOf(currentBytes, i + 1);
+					byte tmpByteArr[] = Arrays.copyOf(currentBytes, i); // removed + 1 here
 					currentBytes = tmpByteArr;
 					
 					reachedEOF = true;
@@ -188,7 +188,7 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 						catch(NoSuchElementException e) 
 						{
 							// EOF - handle case where the last bytes left are smaller than the symbol size
-							byte tmpByteArr[] = Arrays.copyOf(currentBytes, i + 1);
+							byte tmpByteArr[] = Arrays.copyOf(currentBytes, i); 
 							currentBytes = tmpByteArr;
 
 							break;
