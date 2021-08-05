@@ -35,7 +35,6 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 	
 	public AdaptiveHuffmanEncoderDecoder(int symbolSize) 
 	{
-
 		this.setSymbolSize(symbolSize);
 		this.numberOfSymbols = (int)Math.pow(2,(symbolSize * 8));
 	}
@@ -72,7 +71,6 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 		boolean reachedEOF = false;
 		Stack<Boolean> currentPathToNode = null;
 
-		// write 4 bits for symbol size
 		writeSymbolSizeHeader(out);
 		
 		while (!in.isEmpty()) 
@@ -98,8 +96,6 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 			
 			// set bytes to symbol
 			currentSymbol = new Symbol(currentBytes);
-
-			// check if the symbol exists in the tree
 			currentNode = huffmanTree.containsSymbol(currentSymbol);
 
 			// not a new symbol
@@ -206,7 +202,6 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 		System.out.println("[*] symbol size: " + symbolSize);
 		numberOfSymbols = (int)Math.pow(2,(symbolSize * 8));
 		
-		// init huffman tree
 		HuffmanTree huffmanTree = new HuffmanTree(this.numberOfSymbols);
 
 		// read one symbol at a time, traverse the huffman tree
@@ -228,7 +223,6 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 			// read bits until you reach a leaf
 			if (traverseNode.isLeaf()) 
 			{
-				// nyt - new symbol encountered
 				if (traverseNode.isNYT()) 
 				{	
 					// read bytes according to symbol length
@@ -251,10 +245,7 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 					
 					// create a symbol with read bytes
 					currentSymbol = new Symbol(currentBytes);
-					
-					// save binary representation of the symbol
 					currentCode = Converter.bytesToString(currentSymbol.getBytes());
-				
 					huffmanTree.addNewSymbolNode(currentSymbol);
 				}
 
@@ -263,10 +254,7 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 				{
 					// take the value of the node
 					currentSymbol = traverseNode.getSymbol();
-					
-					// update tree
-					huffmanTree.updateTree(traverseNode);	
-					
+					huffmanTree.updateTree(traverseNode);
 					currentCode = Converter.bytesToString(currentSymbol.getBytes());	
 				}
 				
@@ -314,7 +302,6 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 			try 
 			{
 				currentBit = in.readBoolean();
-
 				if (currentBit == ONE_BIT) 
 				{
 					traverseNode = traverseNode.getRight();
@@ -323,7 +310,6 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 				{
 					traverseNode = traverseNode.getLeft();
 				}
-
 			} 
 			catch (NoSuchElementException ex) 
 			{

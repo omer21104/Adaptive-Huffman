@@ -14,7 +14,6 @@ public class Node implements Comparable<Node>
 	private int id, weight;
 	private Symbol symbol;
 	private Node left, right, parent;
-//	private String pathToNode;
 	private Stack<Boolean> pathToThisNode;
 
 	public Node() 
@@ -37,7 +36,6 @@ public class Node implements Comparable<Node>
 		this.weight = weight;
 		this.symbol = val;
 		this.left = this.right = null;
-//		this.pathToNode = "";
 		this.pathToThisNode = null;
 	}
 	
@@ -198,23 +196,6 @@ public class Node implements Comparable<Node>
 	{
 		weight++;
 	}
-	
-//	public void setPathToNode(String path) {
-//		this.pathToNode = path;
-//	}
-//	
-//	public String getPathToNode() {
-//		return this.pathToNode;
-//	}
-	
-//	public void updatePathToNode(boolean isLeftChild) {
-//		if (isLeftChild) {
-//			this.setPathToNode(this.getPathToNode() + '0');
-//		}
-//		else {			
-//			this.setPathToNode(this.getPathToNode() + '1');
-//		}
-//	}
 	
 	public String toString() 
 	{
