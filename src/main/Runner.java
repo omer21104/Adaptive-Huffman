@@ -14,15 +14,6 @@ public class Runner
 //		ProgramHandler handler = new ProgramHandler();
 //		handler.initAndShowGui();
 		
-//		String[] in_comp = {"C:\\Users\\ASUS\\Dropbox\\Java\\Adaptive Huffman\\ExampleInputs\\OnTheOrigin.txt"};
-//		String[] out_comp = {"C:\\Users\\ASUS\\Dropbox\\Java\\Adaptive Huffman\\test outputs\\test4"};
-//		String[] out_decomp = {"C:\\Users\\ASUS\\Dropbox\\Java\\Adaptive Huffman\\test outputs\\test4out.txt"};
-//		
-//		
-//		AdaptiveHuffmanEncoderDecoder foo = new AdaptiveHuffmanEncoderDecoder(4);
-//		foo.Compress(in_comp, out_comp);
-//		foo.Decompress(out_comp, out_decomp);
-		
 		Tester.test();
 		}
 }

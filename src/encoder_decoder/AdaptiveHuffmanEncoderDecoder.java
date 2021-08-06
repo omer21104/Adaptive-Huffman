@@ -57,34 +57,13 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 		
 		while (!in.isEmpty()) 
 		{
-			// read bytes according to symbol length
-			byte currentBytes[] = new byte[symbolSize];
-			for (int i = 0; i < currentBytes.length; i++) 
-			{
-				try 
-				{
-					currentBytes[i] = in.readByte();
-				} 
-				catch(NoSuchElementException e) 
-				{
-					// EOF - handle case where the last bytes left are smaller than the symbol size
-					byte tmpByteArr[] = Arrays.copyOf(currentBytes, i); // removed + 1 here
-					currentBytes = tmpByteArr;
-					
-					reachedEOF = true;
-					break;
-				}
-			}
-			
-			// set bytes to symbol
-			currentSymbol = new Symbol(currentBytes);
+			currentSymbol = readNextSymbol(in);
 			currentNode = huffmanTree.containsSymbol(currentSymbol);
 
 			// not a new symbol
 			if (currentNode != null) 
 			{
 				currentPathToNode = currentNode.getPathToThisNode();
-				
 				huffmanTree.updateTree(currentNode);
 			}
 
@@ -92,31 +71,16 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 			else 
 			{
 				currentPathToNode = huffmanTree.getCurrentNYT().getPathToThisNode();
-				
 				huffmanTree.addNewSymbolNode(currentSymbol); 
 			}
 			
-			// unwind path to node stack
-			while (!currentPathToNode.isEmpty()) 
-			{
-				if (currentPathToNode.pop() == Node.LEFT_CHILD) 
-				{
-					out.write(ZERO_BIT);
-				}
-				else 
-				{
-					out.write(ONE_BIT);
-				}
-			}
+			writePathToNode(out, currentPathToNode);
 			
 			// write bytes if it was a new symbol
 			if (currentNode == null) 
 			{
 				byte bytesToWrite[] = currentSymbol.getBytes();
-				for (int i = 0; i < bytesToWrite.length; i++) 
-				{
-					out.write(bytesToWrite[i]);
-				}
+				out.write(bytesToWrite);
 			}
 			
 			// write a '0' control bit after each code for a symbol
@@ -152,7 +116,7 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 		symbolSize = readSymbolSizeFromHeader(in);
 
 		System.out.println("[*] symbol size: " + symbolSize);
-		numberOfSymbols = (int)Math.pow(2,(symbolSize * 8));
+		numberOfSymbols = calculateNumberOfSymbols();
 		
 		HuffmanTree huffmanTree = new HuffmanTree(this.numberOfSymbols);
 
@@ -161,9 +125,7 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 		Node traverseNode = root;
 		Symbol currentSymbol = null;
 		String currentCode = "";
-		boolean currentBit;
 		boolean reachedEOF = false;
-		boolean controlBit = false;
 		
 		while (!in.isEmpty()) 
 		{
@@ -175,33 +137,15 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 			// read bits until you reach a leaf
 			if (traverseNode.isLeaf()) 
 			{
+				// new symbol
 				if (traverseNode.isNYT()) 
 				{	
-					// read bytes according to symbol length
-					byte currentBytes[] = new byte[symbolSize];
-					for (int i = 0; i < symbolSize; i++) 
-					{
-						try 
-						{
-							currentBytes[i] = in.readByte();
-						} 
-						catch(NoSuchElementException e) 
-						{
-							// EOF - handle case where the last bytes left are smaller than the symbol size
-							byte tmpByteArr[] = Arrays.copyOf(currentBytes, i); 
-							currentBytes = tmpByteArr;
-
-							break;
-						}
-					}
-					
-					// create a symbol with read bytes
-					currentSymbol = new Symbol(currentBytes);
+					currentSymbol = readNextSymbol(in);
 					currentCode = Converter.bytesToString(currentSymbol.getBytes());
 					huffmanTree.addNewSymbolNode(currentSymbol);
 				}
 
-				// not nyt - byte already exists
+				// not nyt - symbol already exists
 				else 
 				{
 					// take the value of the node
@@ -211,37 +155,12 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 				}
 				
 				// write the code
-				for (int i = 0; i < currentCode.length(); i++) 
-				{
-					if (currentCode.charAt(i) == '1') 
-					{
-						out.write(ONE_BIT);
-					} 
-					else 
-					{
-						out.write(ZERO_BIT);
-					}
-				}
+				writeCode(out, currentCode);
 				
-				// read one more control bit
-				try 
-				{
-					controlBit = in.readBoolean();
-				}
-				catch(NoSuchElementException e)
-				{
-					
-				}
+				reachedEOF = readControlBit(in);
 				
-				if (controlBit == ONE_BIT)
-				{
-					reachedEOF = true;
-				}
-				
-				// reset traverseNode
+				// reset traverseNode and currentCode
 				traverseNode = root;
-				
-				// reset currentCode
 				currentCode = "";
 			}
 			
@@ -250,23 +169,7 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 				break;
 			}
 
-			// traverse the tree
-			try 
-			{
-				currentBit = in.readBoolean();
-				if (currentBit == ONE_BIT) 
-				{
-					traverseNode = traverseNode.getRight();
-				} 
-				else 
-				{
-					traverseNode = traverseNode.getLeft();
-				}
-			} 
-			catch (NoSuchElementException ex) 
-			{
-				// EOF
-			}
+			traverseNode = traverseHuffmanTree(in, traverseNode);
 		}
 
 		// close resources
@@ -390,4 +293,115 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 		out.close();
 	}
 
+	/**
+	 * read next symbol from file, this method adjusts for symbols with size smaller than the symbol size,<br> 
+	 * so the {@code Symbol} contains only bytes read.
+	 * @param in BinaryIn object to read from file
+	 * @return {@code Symbol} object with the bytes actually read
+	 */
+	private Symbol readNextSymbol(BinaryIn in)
+	{
+		byte currentBytes[] = new byte[symbolSize];
+		for (int i = 0; i < currentBytes.length; i++) 
+		{
+			try 
+			{
+				currentBytes[i] = in.readByte();
+			} 
+			catch(NoSuchElementException e) 
+			{
+				// EOF - handle case where the last bytes left are smaller than the symbol size
+				currentBytes = Arrays.copyOf(currentBytes, i);
+				
+				break;
+			}
+		}
+		
+		return new Symbol(currentBytes);
+	}
+	
+	private void writePathToNode(BinaryOut out, Stack<Boolean> PathToNode)
+	{
+		while (!PathToNode.isEmpty()) 
+		{
+			if (PathToNode.pop() == Node.LEFT_CHILD) 
+			{
+				out.write(ZERO_BIT);
+			}
+			else 
+			{
+				out.write(ONE_BIT);
+			}
+		}
+	}
+
+	private int calculateNumberOfSymbols() 
+	{
+		return (int)Math.pow(2 , (symbolSize * 8));
+	}
+
+	private void writeCode(BinaryOut out, String currentCode) 
+	{
+		for (int i = 0; i < currentCode.length(); i++) 
+		{
+			if (currentCode.charAt(i) == '1') 
+			{
+				out.write(ONE_BIT);
+			} 
+			else 
+			{
+				out.write(ZERO_BIT);
+			}
+		}
+	}
+	
+	/**
+	 * this method determines whether or not EOF has been reached by reading the control bit after each symbol.
+	 * @param in BinaryIn object for reading
+	 * @return {@code true} if and only if the read bit is 1
+	 */
+	private boolean readControlBit(BinaryIn in) 
+	{
+		boolean controlBit = false;
+		try 
+		{
+			controlBit = in.readBoolean();
+		}
+		catch(NoSuchElementException e)
+		{
+			
+		}
+		
+		return controlBit;
+	}
+	
+	/**
+	 * traverse the huffman tree by reading a bit. 1 means go right, 0 means left
+	 * @param in BinaryIn object for reading
+	 * @param traverseNode the node to traverse the tree with
+	 * @return {@code traverseNode} after having moved it along the appropriate path in the tree
+	 */
+	private Node traverseHuffmanTree(BinaryIn in, Node traverseNode) 
+	{
+		boolean currentBit;
+		// traverse the tree
+		try 
+		{
+			currentBit = in.readBoolean();
+			if (currentBit == ONE_BIT) 
+			{
+				traverseNode = traverseNode.getRight();
+			} 
+			else 
+			{
+				traverseNode = traverseNode.getLeft();
+			}
+		} 
+		catch (NoSuchElementException ex) 
+		{
+			// EOF
+		}
+		
+		return traverseNode;
+	}
 }
