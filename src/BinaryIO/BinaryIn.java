@@ -361,6 +361,9 @@ public final class BinaryIn {
         return (byte) (c & 0xff);
     }
     
+    public void close() throws IOException {
+    	in.close();
+    }
    /**
      * Unit tests the {@code BinaryIn} data type.
      * Reads the name of a file or URL (first command-line argument)

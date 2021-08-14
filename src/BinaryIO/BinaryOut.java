@@ -316,6 +316,13 @@ public final class BinaryOut {
             write(s.charAt(i), r);
     }
 
+    public void write(byte[] bytes)
+    {
+    	for (int i = 0; i < bytes.length; i++) 
+    	{
+    		write(bytes[i]);
+		}
+    }
 
    /**
      * Test client. Read bits from standard input and write to the file

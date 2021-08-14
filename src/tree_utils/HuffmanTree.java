@@ -8,16 +8,14 @@ import utilities.Symbol;
 public class HuffmanTree 
 {
 	private int id;
-	private static final boolean LEFT_CHILD = true;
 	
 	private Node root, currentNYT;
 	private HashMap<Symbol, Node> leaves;
 	
-	public HuffmanTree(int numberOfSymbols) {
+	public HuffmanTree(int numberOfSymbols) 
+	{
 		id = 2 * numberOfSymbols - 1;
-		
 		leaves = new HashMap<Symbol, Node>();
-
 		root = new Node(id, 0, null, null);
 		currentNYT = root;
 		
@@ -41,11 +39,9 @@ public class HuffmanTree
 		
 		leaves.put(symbol, newChild);
 		
-		// set children
 		currentNYT.setLeft(newNYT);
 		currentNYT.setRight(newChild);
 		
-		// set new nyt node
 		currentNYT = newNYT;
 
 		// update tree
@@ -58,7 +54,6 @@ public class HuffmanTree
 	 */
 	public void updateTree(Node node) 
 	{
-		
 		Node parentNode = node.getParent();
 		if (parentNode == null) 
 		{
@@ -80,7 +75,7 @@ public class HuffmanTree
 		}
 		
 		// swap node with the node with highest id number in its block
-		Node nodeWithHighestIdInBlock = this.getNodeWithHighestIdInBlockScanWholeTree(node);
+		Node nodeWithHighestIdInBlock = this.getNodeWithHighestIdInBlock(node);
 		
 		if (!node.equals(nodeWithHighestIdInBlock)) 
 		{
@@ -125,12 +120,12 @@ public class HuffmanTree
 	 * @param nodeToCompare node to compare other nodes to
 	 * @return the node with the highest id in the block relative to {@code nodeToCompare}
 	 */
-	public Node getNodeWithHighestIdInBlockScanWholeTree(Node node) 
+	public Node getNodeWithHighestIdInBlock(Node nodeToCompare) 
 	{
 		LinkedList<Node> Q = new LinkedList<Node>();
-		Node parentOfStartingNode = node.getParent();
+		Node parentOfStartingNode = nodeToCompare.getParent();
 		
-		Node nodeToReturn = node;
+		Node nodeToReturn = nodeToCompare;
 		
 		while (parentOfStartingNode != null) 
 		{
