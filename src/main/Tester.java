@@ -7,6 +7,9 @@ import java.util.Arrays;
 
 import encoder_decoder.AdaptiveHuffmanEncoderDecoder;
 
+/**
+ * This class is used for testing AdaptiveHuffmanEncoderDecoder
+ */
 public class Tester 
 {
 	static final String[] in_comp = {"C:\\Users\\ASUS\\Dropbox\\Java\\Adaptive Huffman\\ExampleInputs\\OnTheOrigin.txt"};
@@ -16,6 +19,10 @@ public class Tester
 	static final String decomp_file_name = "OnTheOrigin";
 	static final String format = ".txt";
 	
+	/**
+	 * test a single file by compressing it and then decompressing it, comparing input and output.
+	 * <br> this method tries all possible symbol sizes allowed by the program implementation
+	 */
 	public static void test()
 	{
 		final int maxSupportedSymbolSize = 8;
@@ -52,7 +59,6 @@ public class Tester
 			
 			boolean areFilesEqual = Arrays.equals(arr1, arr2);
 			System.out.println(String.format("%s", areFilesEqual ? "Success" : "Fail"));
-			
 		}
 	}
 }

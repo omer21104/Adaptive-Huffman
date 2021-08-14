@@ -60,32 +60,31 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 			currentSymbol = readNextSymbol(in);
 			currentNode = huffmanTree.containsSymbol(currentSymbol);
 
-			// not a new symbol
 			if (currentNode != null) 
 			{
+				// not a new symbol
 				currentPathToNode = currentNode.getPathToThisNode();
 				huffmanTree.updateTree(currentNode);
 			}
-
-			// encounter a new symbol
 			else 
 			{
+				// encounter a new symbol
 				currentPathToNode = huffmanTree.getCurrentNYT().getPathToThisNode();
 				huffmanTree.addNewSymbolNode(currentSymbol); 
 			}
 			
 			writePathToNode(out, currentPathToNode);
 			
-			// write bytes if it was a new symbol
 			if (currentNode == null) 
 			{
+				// write bytes if it was a new symbol
 				byte bytesToWrite[] = currentSymbol.getBytes();
 				out.write(bytesToWrite);
 			}
 			
-			// write a '0' control bit after each code for a symbol
 			if (!reachedEOF && !in.isEmpty())
 			{				
+				// write a '0' control bit after each code for a symbol
 				out.write(ZERO_BIT);
 			}
 		}
@@ -112,7 +111,6 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 		BinaryIn in = initBinaryIn(input_names);
 		BinaryOut out = initBinaryOut(output_names);
 	
-		// read first 4 bits to get symbol size
 		symbolSize = readSymbolSizeFromHeader(in);
 
 		System.out.println("[*] symbol size: " + symbolSize);
@@ -120,7 +118,6 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 		
 		HuffmanTree huffmanTree = new HuffmanTree(this.numberOfSymbols);
 
-		// read one symbol at a time, traverse the huffman tree
 		Node root = huffmanTree.getRoot();
 		Node traverseNode = root;
 		Symbol currentSymbol = null;
@@ -129,6 +126,7 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 		
 		while (!in.isEmpty()) 
 		{
+			// read one symbol at a time, traverse the huffman tree
 			if (traverseNode == null) 
 			{
 				break;
@@ -148,13 +146,11 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 				// not nyt - symbol already exists
 				else 
 				{
-					// take the value of the node
 					currentSymbol = traverseNode.getSymbol();
 					huffmanTree.updateTree(traverseNode);
 					currentCode = Converter.bytesToString(currentSymbol.getBytes());	
 				}
 				
-				// write the code
 				writeCode(out, currentCode);
 				
 				reachedEOF = readControlBit(in);
@@ -186,14 +182,14 @@ public class AdaptiveHuffmanEncoderDecoder implements Compressor
 	}
 
 	@Override
-	public byte[] CompressWithArray(String[] input_names, String[] output_names) {
-		// TODO Auto-generated method stub
+	public byte[] CompressWithArray(String[] input_names, String[] output_names) 
+	{
 		return null;
 	}
 
 	@Override
-	public byte[] DecompressWithArray(String[] input_names, String[] output_names) {
-		// TODO Auto-generated method stub
+	public byte[] DecompressWithArray(String[] input_names, String[] output_names) 
+	{
 		return null;
 	}
 	
